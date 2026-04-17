@@ -23,6 +23,11 @@ exit /b 1
 :found
 echo Found REAPER on %foundDrive%:
 cd /d "%foundDrive%:%subpath%"
+if errorlevel 1 (
+    echo [ERROR] Failed to change directory to %foundDrive%:%subpath%
+    pause
+    exit /b 1
+)
 
 echo Starting git pull in: %CD%
 git pull
