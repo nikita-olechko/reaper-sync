@@ -85,6 +85,33 @@ if errorlevel 1 (
     exit /b 1
 )
 
+echo Staging changes in: %targetPath%
+git -C "%targetPath%" add .
+if errorlevel 1 (
+    echo [ERROR] git add failed for %targetPath%
+    exit /b 1
+)
+
+git -C "%targetPath%" diff --cached --quiet
+if errorlevel 1 (
+    set "commitMessage=Sync %relativePath% files %date% %time%"
+    echo Committing changes: !commitMessage!
+    git -C "%targetPath%" commit -m "!commitMessage!"
+    if errorlevel 1 (
+        echo [ERROR] git commit failed for %targetPath%
+        exit /b 1
+    )
+) else (
+    echo No local changes to commit in: %targetPath%
+)
+
+echo Pushing changes in: %targetPath%
+git -C "%targetPath%" push
+if errorlevel 1 (
+    echo [ERROR] git push failed for %targetPath%
+    exit /b 1
+)
+
 exit /b 0
 
 :Trim
