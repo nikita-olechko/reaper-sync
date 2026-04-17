@@ -17,7 +17,7 @@ for %%D in (%drives%) do (
 :notfound
 echo [ERROR] REAPER folder not found on configured drives: %drives%
 pause
-exit /b
+exit /b 1
 
 :found
 echo Found REAPER on %foundDrive%:
@@ -25,7 +25,7 @@ cd /d "%foundDrive%:%subpath%"
 
 echo Starting git pull in: %CD%
 git pull
-if errorlevel 1 (
+if %errorlevel% neq 0 (
     echo.
     echo [ERROR] git pull failed.
     pause
