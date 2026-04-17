@@ -24,6 +24,12 @@ cd /d "%foundDrive%%subpath%"
 
 echo Starting git pull in: %CD%
 git pull
+if errorlevel 1 (
+    echo.
+    echo [ERROR] git pull failed.
+    pause
+    exit /b 1
+)
 
 echo.
 echo Sync complete.
