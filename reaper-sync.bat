@@ -3,24 +3,25 @@ setlocal enabledelayedexpansion
 
 :: Define the target subpath
 set "subpath=\REAPER\UserPlugins\reaper-plugins"
+set "drives=C D E F"
 set "foundDrive="
 
 :: Loop through drive letters C, D, E, F
-for %%D in (C D E F) do (
+for %%D in (%drives%) do (
     if exist "%%D:!subpath!\" (
-        set "foundDrive=%%D:"
+        set "foundDrive=%%D"
         goto :found
     )
 )
 
 :notfound
-echo [ERROR] REAPER folder not found on drives C, D, E, or F.
+echo [ERROR] REAPER folder not found on configured drives: %drives%
 pause
 exit /b
 
 :found
-echo Found REAPER on %foundDrive%
-cd /d "%foundDrive%%subpath%"
+echo Found REAPER on %foundDrive%:
+cd /d "%foundDrive%:%subpath%"
 
 echo Starting git pull in: %CD%
 git pull
