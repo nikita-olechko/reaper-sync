@@ -4,6 +4,7 @@ setlocal enabledelayedexpansion
 :: Define the target subpath
 set "subpath=\REAPER\UserPlugins\reaper-plugins"
 set "drives=C D E F"
+set "drivesDisplay=C:, D:, E:, F:"
 set "foundDrive="
 
 :: Loop through drive letters C, D, E, F
@@ -15,7 +16,7 @@ for %%D in (%drives%) do (
 )
 
 :notfound
-echo [ERROR] REAPER folder not found on configured drives: %drives%
+echo [ERROR] REAPER folder not found on configured drives: %drivesDisplay%
 pause
 exit /b 1
 
