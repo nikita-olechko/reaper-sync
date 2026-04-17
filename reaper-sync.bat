@@ -8,7 +8,7 @@ set "foundDrive="
 
 :: Loop through drive letters C, D, E, F
 for %%D in (%drives%) do (
-    if exist "%%D:!subpath!\" (
+    if exist "%%D:%subpath%\" (
         set "foundDrive=%%D"
         goto :found
     )
