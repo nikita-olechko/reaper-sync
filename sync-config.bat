@@ -34,6 +34,23 @@ echo Found REAPER at: %reaperRoot%
 echo Using mappings from: %mappingFile%
 echo.
 
+rem Update this script repository first (if it's a git repository)
+if exist "%scriptDir%.git\" (
+    echo [UPDATE] Pulling latest changes in script directory...
+    pushd "%scriptDir%"
+    git pull
+    if errorlevel 1 (
+        echo [WARNING] Failed to update script directory - continuing with sync
+    ) else (
+        echo [SUCCESS] Script directory updated successfully
+    )
+    popd
+    echo.
+) else (
+    echo [INFO] Script directory is not a git repository - skipping self-update
+    echo.
+)
+
 for /f "usebackq eol=# tokens=1* delims=:" %%A in ("%mappingFile%") do (
     set "relativePath=%%~A"
     set "repoUrl=%%~B"
