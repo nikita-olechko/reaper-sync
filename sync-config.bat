@@ -1,6 +1,13 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 
+rem Bring console window to foreground
+title REAPER Config Sync
+echo Set objShell = CreateObject("WScript.Shell") > "%temp%\activate.vbs"
+echo objShell.AppActivate "REAPER Config Sync" >> "%temp%\activate.vbs"
+cscript //nologo "%temp%\activate.vbs" >nul 2>&1
+del "%temp%\activate.vbs" >nul 2>&1
+
 set "scriptDir=%~dp0"
 set "mappingFile=%scriptDir%sync-mappings.txt"
 set "drives=C D E F"
