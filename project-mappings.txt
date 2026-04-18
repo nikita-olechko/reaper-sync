@@ -1,2 +1,3 @@
 # ProjectName: RepoURL
 reaper-projects-hello-world: https://github.com/nikita-olechko/reaper-projects-hello-world
+reaper-projects-tutorial: https://github.com/nikita-olechko/reaper-projects-tutorial

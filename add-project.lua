@@ -156,6 +156,7 @@ function main()
     
     -- Check if GitHub CLI is available
     local gh_success, gh_result = execute_command("gh --version")
+    local repo_url = nil
     
     if not gh_success then
         reaper.ShowMessageBox("GitHub CLI not found.\n\nGitHub CLI is required for this script.\nPlease install GitHub CLI from:\nhttps://cli.github.com/\n\nThen try again.", "Error", 0)
@@ -217,42 +218,38 @@ function main()
             
             if create_success then
                 -- Get repository URL
-        local url_cmd = 'gh repo view "' .. full_project_name .. '" --json url -q .url'
-        local url_success, url_result = execute_command(url_cmd)
-        
-        if not url_success or not url_result then
-            reaper.ShowMessageBox("GitHub repository was created, but failed to get repository URL.\n\nPlease check your GitHub account.", "Error", 0)
-            return
-        end
-        
-        local repo_url = trim(url_result)
-                    -- Add remote origin and push if git was successful
-                    if git_success then
-                        -- Set up remote connection
-                        local add_remote_cmd = 'git -C "' .. project_path .. '" remote add origin "' .. repo_url .. '.git"'
-                        execute_command(add_remote_cmd)
-                        
-                        -- Push with upstream tracking
-                        local push_success, push_result = execute_command('git -C "' .. project_path .. '" push -u origin main')
-                        
-                        if push_success then
-                            reaper.ShowMessageBox("GitHub repository created and initial commit pushed!\n\nRepository: " .. repo_url, "Success", 0)
-                        else
-                            reaper.ShowMessageBox("GitHub repository created but failed to push initial commit.\n\nRepository: " .. repo_url, "Warning", 0)
-                        end
+                local url_cmd = 'gh repo view "' .. full_project_name .. '" --json url -q .url'
+                local url_success, url_result = execute_command(url_cmd)
+                
+                if not url_success or not url_result then
+                    reaper.ShowMessageBox("GitHub repository was created, but failed to get repository URL.\n\nPlease check your GitHub account.", "Error", 0)
+                    return
+                end
+                
+                repo_url = trim(url_result)
+                
+                -- Add remote origin and push if git was successful
+                if git_success then
+                    -- Set up remote connection
+                    local add_remote_cmd = 'git -C "' .. project_path .. '" remote add origin "' .. repo_url .. '.git"'
+                    execute_command(add_remote_cmd)
+                    
+                    -- Push with upstream tracking
+                    local push_success, push_result = execute_command('git -C "' .. project_path .. '" push -u origin main')
+                    
+                    if push_success then
+                        reaper.ShowMessageBox("GitHub repository created and initial commit pushed!\n\nRepository: " .. repo_url, "Success", 0)
                     else
-                        reaper.ShowMessageBox("GitHub repository created!\n\nRepository: " .. repo_url .. "\n\nNote: Git initialization failed earlier, so no initial commit was pushed.", "Partial Success", 0)
+                        reaper.ShowMessageBox("GitHub repository created but failed to push initial commit.\n\nRepository: " .. repo_url, "Warning", 0)
                     end
                 else
-                    reaper.ShowMessageBox("GitHub repository may have been created, but failed to get repository URL.\n\nPlease check your GitHub account and try again.", "Error", 0)
-                    return
+                    reaper.ShowMessageBox("GitHub repository created!\n\nRepository: " .. repo_url .. "\n\nNote: Git initialization failed earlier, so no initial commit was pushed.", "Partial Success", 0)
                 end
             else
                 reaper.ShowMessageBox("Failed to create GitHub repository.\n\nThis may happen if:\n- Repository already exists\n- Authentication failed\n- Network issues\n\nError: " .. (create_result or "Unknown error"), "Error", 0)
                 return
             end
         end
-    end
     
     -- Add to project mappings
     local mapping_entry = full_project_name .. ": " .. repo_url
