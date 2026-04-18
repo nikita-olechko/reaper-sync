@@ -4,11 +4,9 @@ setlocal EnableExtensions EnableDelayedExpansion
 set "scriptDir=%~dp0"
 set "mappingFile=%scriptDir%project-mappings.txt"
 set "lastProjectFile=%scriptDir%last-project.txt"
-set "reaperSubpath=\REAPER"
 set "projectsSubpath=Projects"
 set "drives=C D E F"
 set "drivesDisplay=C:, D:, E:, F:"
-set "reaperRoot="
 set "lastProject="
 
 if not exist "%mappingFile%" (
@@ -22,18 +20,16 @@ if exist "%lastProjectFile%" (
     call :Trim lastProject
 )
 
-for %%D in (%drives%) do (
-    if exist "%%D:%reaperSubpath%\" (
-        set "reaperRoot=%%D:%reaperSubpath%"
-        goto :found
-    )
+rem Find REAPER installation
+call "%scriptDir%find-reaper.bat" "%drives%"
+if %REAPER_FOUND% EQU 0 (
+    echo [ERROR] REAPER folder not found on configured drives: %drivesDisplay%
+    echo [ERROR] Also checked one level down in root folders of each drive
+    pause
+    exit /b 1
 )
 
-echo [ERROR] REAPER folder not found on configured drives: %drivesDisplay%
-pause
-exit /b 1
-
-:found
+set "reaperRoot=%REAPER_ROOT%"
 set "projectsRoot=%reaperRoot%\%projectsSubpath%"
 
 if not exist "%projectsRoot%\" (

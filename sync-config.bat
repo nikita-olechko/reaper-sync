@@ -3,10 +3,19 @@ setlocal EnableExtensions EnableDelayedExpansion
 
 set "scriptDir=%~dp0"
 set "mappingFile=%scriptDir%sync-mappings.txt"
-set "reaperSubpath=\REAPER"
 set "drives=C D E F"
 set "drivesDisplay=C:, D:, E:, F:"
-set "reaperRoot="
+
+rem Find REAPER installation
+call "%scriptDir%find-reaper.bat" "%drives%"
+if %REAPER_FOUND% EQU 0 (
+    echo [ERROR] REAPER folder not found on configured drives: %drivesDisplay%
+    echo [ERROR] Also checked one level down in root folders of each drive
+    pause
+    exit /b 1
+)
+
+set "reaperRoot=%REAPER_ROOT%"
 
 if not exist "%mappingFile%" (
     echo [ERROR] Mapping file not found: %mappingFile%
@@ -14,18 +23,6 @@ if not exist "%mappingFile%" (
     exit /b 1
 )
 
-for %%D in (%drives%) do (
-    if exist "%%D:%reaperSubpath%\" (
-        set "reaperRoot=%%D:%reaperSubpath%"
-        goto :found
-    )
-)
-
-echo [ERROR] REAPER folder not found on configured drives: %drivesDisplay%
-pause
-exit /b 1
-
-:found
 echo Found REAPER at: %reaperRoot%
 echo Using mappings from: %mappingFile%
 echo.
