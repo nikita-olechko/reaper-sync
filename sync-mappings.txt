@@ -1,3 +1,4 @@
 # RelativeFolder: RepoURL
 UserPlugins: https://github.com/nikita-olechko/reaper-plugins
 Configurations: https://github.com/nikita-olechko/reaper-configurations.git
+Misc: https://github.com/nikita-olechko/reaper-misc.git
